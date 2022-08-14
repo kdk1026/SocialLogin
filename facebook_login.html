@@ -14,16 +14,14 @@
 <body>
 
     <div id="fb-root"></div>
-    <!--
-    <div class="fb-login-button" data-width="" data-size="large" data-button-type="continue_with" data-layout="default" data-auto-logout-link="false" data-use-continue-as="false"
-        scope="public_profile,email" onlogin="checkLoginState();"></div>
-    -->    
 
     <div>
         <button type="button" id="btnFacebookLogin">페이스북 로그인</button>
     </div>
     
     <script>
+		/* common-util.js의 loginWithFacebook 참고 */
+
         document.querySelector('#btnFacebookLogin').addEventListener('click', function() {
             fnFacebookLogin();
         });
