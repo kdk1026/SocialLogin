@@ -16,3 +16,10 @@ Config.Google = {
 Config.Facebook = {
     facebookAppId: '220208929975498'
 }
+
+Config.Apple = {
+    appleClientId: 'com.test.kdk',
+    appleScope: 'email',
+    appleRedirectUri: 'https://kdk1026.github.io/SocialLogin/apple_login_callback.html',
+    appleState: 'kdk'
+}
