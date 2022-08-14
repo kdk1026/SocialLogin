@@ -32,12 +32,6 @@
             document.querySelector('#appleid-signin').click();
         });
 
-		function appleSignInCallBack(data) {
-			console.log(data);
-
-			const email = data.email;
-		}
-
 		//애플로 로그인 성공 시.
 		document.addEventListener('AppleIDSignInOnSuccess', function(data) {
 			console.log("AppleIDSignInOnSuccess");
@@ -47,9 +41,6 @@
 		    const result = JSON.parse(base64_url_decode(base64Payload));
 
 			console.log(result);
-
-			// window.opener.appleSignInCallBack(result);
-			// window.close();
 		});
 
 		//애플로 로그인 실패 시.
