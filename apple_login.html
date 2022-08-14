@@ -37,6 +37,59 @@
 
 			const email = data.email;
 		}
+
+		//애플로 로그인 성공 시.
+		document.addEventListener('AppleIDSignInOnSuccess', function(data) {
+			console.log("AppleIDSignInOnSuccess");
+			
+			const token = data.detail.authorization.id_token;
+		    const base64Payload = token.split('.')[1];
+		    const result = JSON.parse(base64_url_decode(base64Payload));
+
+			console.log( result );
+
+			// window.opener.appleSignInCallBack(result);
+			// window.close();
+		});
+
+		//애플로 로그인 실패 시.
+		document.addEventListener('AppleIDSignInOnFailure', function(error) {
+			console.log("AppleIDSignInOnFailure");
+		});
+
+		function b64DecodeUnicode(str) {
+		    return decodeURIComponent(
+				atob(str).replace(/(.)/g, function (m, p) {
+					var code = p.charCodeAt(0).toString(16).toUpperCase();
+					if (code.length < 2) {
+						code = "0" + code;
+					}
+					return "%" + code;
+				})
+		    );
+		}
+
+		function base64_url_decode(str) {
+			var output = str.replace(/-/g, "+").replace(/_/g, "/");
+			switch (output.length % 4) {
+			case 0:
+				break;
+			case 2:
+				output += "==";
+				break;
+			case 3:
+				output += "=";
+				break;
+			default:
+				throw "Illegal base64url string!";
+			}
+
+			try {
+				return b64DecodeUnicode(output);
+			} catch (err) {
+				return atob(output);
+			}
+		}
     </script>
 
 </body>
