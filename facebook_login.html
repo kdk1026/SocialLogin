@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <script src="/config.js"></script>
+    <script src="/common-util.js"></script>
+
+    <script async defer crossorigin="anonymous" src="https://connect.facebook.net/ko_KR/sdk.js#xfbml=1&version=v11.0&appId=220208929975498&autoLogAppEvents=1" nonce="rRcgKpNh"></script>
+</head>
+<body>
+
+    <div id="fb-root"></div>
+    <!--
+    <div class="fb-login-button" data-width="" data-size="large" data-button-type="continue_with" data-layout="default" data-auto-logout-link="false" data-use-continue-as="false"
+        scope="public_profile,email" onlogin="checkLoginState();"></div>
+    -->    
+
+    <div>
+        <button type="button" id="btnFacebookLogin">페이스북 로그인</button>
+    </div>
+    
+    <script>
+        document.querySelector('#btnFacebookLogin').addEventListener('click', function() {
+            fnFacebookLogin();
+        });
+
+		function fnFacebookLogin() {
+			FB.login(function(response) {
+				if (response.status === 'connected') {
+					checkLoginState();
+				}
+			}, {scope: 'public_profile,email'});
+		}
+		
+		window.fbAsyncInit = function() {
+			FB.init({
+				appId            : Config.Facebook.facebookAppId,
+				autoLogAppEvents : true,
+				xfbml            : true,
+				version          : 'v11.0'
+			});
+		};
+
+	    function checkLoginState() {
+			FB.getLoginStatus(function(response) {
+				statusChangeCallback(response);
+			});
+	    }
+	    
+		function statusChangeCallback(response) {
+			if (response.status === 'connected') {
+				callgetProfileAPI();
+			} else if (response.status === 'not_authorized') {
+				// 사람은 Facebook에 로그인했지만 앱에는 로그인하지 않았습니다.
+				alert('앱에 로그인해야 이용가능한 기능입니다.');
+			} else {
+				// 그 사람은 Facebook에 로그인하지 않았으므로이 앱에 로그인했는지 여부는 확실하지 않습니다.
+				alert('페이스북에 로그인해야 이용가능한 기능입니다.');
+			}
+	    }
+
+		function callgetProfileAPI() {
+			FB.api('/me?fields=id,name,email', function(response) {
+                console.log(response);
+
+				const email = response.email;
+				//const name = response.name;
+	        });
+
+	        facebookSignOut();
+	    }
+
+	    function facebookSignOut() {
+	        FB.logout(function(response) {
+	            //console.log(response);
+	            console.log('Facebook User signed out.');
+	        });
+	    }
+    </script>
+
+</body>
+</html>

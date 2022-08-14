@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <script src="/config.js"></script>
+    <script src="/common-util.js"></script>
+
+    <script src="https://static.nid.naver.com/js/naveridlogin_js_sdk_2.0.2.js" charset="utf-8"></script>
+</head>
+<body>
+
+    <script>
+		function fnGetDomain() {
+			return window.location.protocol + "//" + window.location.host;
+		}
+
+        const naverCallback = fnGetDomain() + '/naver_login_callback.html';
+		const naverLogin = CommonJS.SocialLogin.loginWithNaverCallBack(Config.Naver.naverClientId, naverCallback);
+
+        // Callback의 처리. 정상적으로 Callback 처리가 완료될 경우 main page로 redirect(또는 Popup close)
+        window.addEventListener('load', function () {
+            naverLogin.getLoginStatus(function (status) {
+                if (status) {
+                    // 필수적으로 받아야하는 프로필 정보가 있다면 callback처리 시점에 체크
+                    const email = naverLogin.user.getEmail();
+                    const name = naverLogin.user.getName();
+                    const mobile = naverLogin.user.getMobile();
+
+                    const profileObj = {};
+                    profileObj.email = email;
+                    profileObj.name = name;
+                    profileObj.mobile = mobile;
+
+                    window.opener.getProfileSucCallBack(profileObj);
+                    window.close();	
+                } else {
+                    console.log("callback 처리에 실패하였습니다.");
+                }
+            });
+        });
+    </script>
+
+</body>
+</html>

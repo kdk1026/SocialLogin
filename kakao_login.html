@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <script src="/config.js"></script>
+    <script src="/common-util.js"></script>
+
+    <script src="https://developers.kakao.com/sdk/js/kakao.js"></script>
+</head>
+<body>
+
+    <div>
+        <button type="button" id="btnKakaoLogin">카카오 로그인</button>
+    </div>
+
+    <script>
+        Kakao.init(Config.Kakao.kakaoAppKey);
+
+        console.log(Kakao.isInitialized());
+    </script>
+    <script>
+        document.querySelector('#btnKakaoLogin').addEventListener('click', function() {
+            CommonJS.SocialLogin.loginWithKakao(kakaoUserMeSucCallBack, kakaoUserMeFailCallBak, kakaoLoginFailCallBack);
+        });
+
+		function kakaoUserMeSucCallBack(obj) {
+            console.log(obj);
+
+          	CommonJS.SocialLogin.logoutWithKakao(kakaoLogoutCallBack);
+
+			const email = obj.kakao_account.email;
+			const name = obj.kakao_account.profile.nickname;
+		}
+
+		function kakaoUserMeFailCallBak(obj) {
+			console.log(obj);
+		}
+
+		function kakaoLoginFailCallBack(obj) {
+			console.error(obj);
+			alert('카카오 로그인에 실패했습니다.\n잠시 후 다시 시도해주세요.\n지속적인 오류 발생 시 관리자에게 문의바랍니다.');
+		}
+
+		function kakaoLogoutCallBack(accessToken) {
+			//console.log(accessToken);
+			console.log('Kakao User signed out.');
+		}
+    </script>
+    
+</body>
+</html>

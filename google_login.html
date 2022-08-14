@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta name ="google-signin-client_id" content="61294626708-i6363305oiiab2hlhobuqcqblurrubsm.apps.googleusercontent.com">
+
+    <title>Document</title>
+
+    <script src="/config.js"></script>
+    <script src="/common-util.js"></script>
+
+    <script src="https://apis.google.com/js/platform.js?onload=googleAuthInit" async defer></script>
+</head>
+<body>
+
+    <div>
+        <button type="button" id="btnGoogleLogin">구글 로그인</button>
+
+        <!-- 구글 로그인 버튼 노출 영역 -->
+		<div class="g-signin2" id="GgCustomLogin" style="display: none;"></div>
+    </div>
+
+    <script>
+        /* common-util.js의 loginWithGoogle 참고 */
+
+        document.querySelector('#btnGoogleLogin').addEventListener('click', function() {
+            document.querySelector("#GgCustomLogin").click();
+        });
+
+        function googleAuthInit() {
+            gapi.load('auth2', function() {
+                gapi.auth2.init();
+
+                options = new gapi.auth2.SigninOptionsBuilder();
+                options.setPrompt('select_account');
+                options.setScope('profile').setScope('email'); 
+
+                gapi.auth2.getAuthInstance().attachClickHandler('GgCustomLogin', options, googleSignIn, googleSignFailure);
+            });
+        }
+
+        function googleSignIn(googleUser) {
+            const access_token = googleUser.getAuthResponse().access_token;
+
+            const method = 'get';
+            const url = 'https://people.googleapis.com/v1/people/me';
+            
+            const param = {};
+            param.personFields = 'birthdays';
+            param.key = Config.Google.googleApiKey;
+            param.access_token = access_token;
+
+            CommonJS.Http.commonFetch(method, url, null, param, googleSignInCallBack);
+        }
+
+        // 프로필을 가져온다
+        function googleSignInCallBack(data) {
+            const googleUser = gapi.auth2.getAuthInstance().currentUser.get();
+            const profile = googleUser.getBasicProfile();
+
+            console.log(profile);
+            
+			const email = profile.getEmail();
+			const name = profile.getName();
+
+            googleSignOut();
+        }
+
+        function googleSignFailure(t) {
+            console.log(t);
+        }
+
+        // 로그아웃
+        function googleSignOut() {
+            const auth2 = gapi.auth2.getAuthInstance();
+            auth2.signOut().then(function () {
+                console.log('User signed out.');
+            });
+            auth2.disconnect();
+        }
+    </script>
+    
+</body>
+</html>

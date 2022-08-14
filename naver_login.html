@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <script src="/config.js"></script>
+    <script src="/common-util.js"></script>
+
+    <script src="https://static.nid.naver.com/js/naveridlogin_js_sdk_2.0.2.js" charset="utf-8"></script>
+</head>
+<body>
+
+    <div>
+        <button type="button" id="btnNaverLogin">네이버 로그인</button>
+
+        <!-- 네이버아이디로로그인 버튼 노출 영역 -->
+		<div id="naverIdLogin" style="display: none;"></div>
+    </div>
+    
+    <script>
+        document.querySelector('#btnNaverLogin').addEventListener('click', function() {
+            document.querySelector('#naverIdLogin').firstChild.click();
+        });
+
+		function fnGetDomain() {
+			return window.location.protocol + "//" + window.location.host;
+		}
+
+        const naverCallback = fnGetDomain() + '/naver_login_callback.html';
+        CommonJS.SocialLogin.loginWithNaver(Config.Naver.naverClientId, naverCallback);
+
+        function getProfileSucCallBack(profileObj) {
+            console.log(profileObj);
+        }
+    </script>
+
+</body>
+</html>
