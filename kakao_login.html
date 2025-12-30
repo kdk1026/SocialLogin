@@ -17,32 +17,58 @@
         <button type="button" id="btnKakaoLogin">카카오 로그인</button>
     </div>
 
-    <script>
-        Kakao.init(Config.Kakao.kakaoAppKey);
+    <script type="module">
+        import { KakaoAuth } from './utils/socialLogin.js';
 
-        console.log(Kakao.isInitialized());
-    </script>
-    <script>
-        document.querySelector('#btnKakaoLogin').addEventListener('click', function() {
-            CommonJS.SocialLogin.loginWithKakao(kakaoUserMeSucCallBack, kakaoUserMeFailCallBak, kakaoLoginFailCallBack);
+        window.addEventListener('load', function() {
+            // 일반 전역 방식
+            //Kakao.init(Config.Kakao.kakaoAppKey);
+
+            // module 방식 (임포트 및 선언 수동, 브라우저 콘솔에서 함수 호출 불가)
+            KakaoAuth.initKakao(Config.Kakao.kakaoAppKey);
+
+            console.log(Kakao.isInitialized());
         });
 
-		function kakaoUserMeSucCallBack(obj) {
-            console.log(obj);
+        document.querySelector('#btnKakaoLogin').addEventListener('click', function() {
+            // 일반 전역 방식
+            //CommonJS.SocialLogin.loginWithKakao(kakaoUserMeSucCallBack, kakaoUserMeFailCallBak, kakaoLoginFailCallBack);
 
-          	CommonJS.SocialLogin.logoutWithKakao(kakaoLogoutCallBack);
+            // module 방식 (임포트 및 선언 수동, 브라우저 콘솔에서 함수 호출 불가)
+            KakaoAuth.loginWithKakao(kakaoLoginFailCallBack)
+            .then((result) => {
+                const param = {
+                    accessToken: result,
+                    userMeSucCallBack: kakaoUserMeSucCallBack,
+                    userMeFailCallBak: kakaoUserMeFailCallBak
+                };
 
-			const email = obj.kakao_account.email;
-			const name = obj.kakao_account.profile.nickname;
-		}
-
-		function kakaoUserMeFailCallBak(obj) {
-			console.log(obj);
-		}
+                KakaoAuth.getUserInfoWithKakao(param);
+            });
+        });
 
 		function kakaoLoginFailCallBack(obj) {
 			console.error(obj);
 			alert('카카오 로그인에 실패했습니다.\n잠시 후 다시 시도해주세요.\n지속적인 오류 발생 시 관리자에게 문의바랍니다.');
+		}
+
+		function kakaoUserMeSucCallBack(obj) {
+            console.log(obj);
+
+            // 일반 전역 방식
+            //CommonJS.SocialLogin.logoutWithKakao(kakaoLogoutCallBack);
+
+            // module 방식 (임포트 및 선언 수동, 브라우저 콘솔에서 함수 호출 불가)
+            KakaoAuth.logoutWithKakao(kakaoLogoutCallBack);
+
+			const email = obj.kakao_account.email;
+			const name = obj.kakao_account.profile.nickname;
+
+            console.log(name);
+		}
+
+		function kakaoUserMeFailCallBak(obj) {
+			console.log(obj);
 		}
 
 		function kakaoLogoutCallBack(accessToken) {

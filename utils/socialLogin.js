@@ -7,10 +7,22 @@
 
 import { isMobile } from "./mobile.js";
 
+const Kakao = window.Kakao;
+const naver = window.naver;
+
 /**
  * @link https://developers.kakao.com/docs/latest/ko/kakaologin/js
  */
 export const KakaoAuth = {
+    /**
+     * 카카오 SDK 초기화
+     * @param {string} kakaoAppKey 
+     */
+    initKakao: (kakaoAppKey) => {
+        if ( !Kakao.isInitialized() ) {
+            Kakao.init(kakaoAppKey);
+        }
+    },
     /**
      * 카카오 로그인
      * 
@@ -23,7 +35,7 @@ export const KakaoAuth = {
         }
 
         return new Promise((resolve, reject) => {
-            window.Kakao.Auth.login({
+            Kakao.Auth.login({
                 success: function (response) {
                     const accessToken = response.access_token;
                     resolve(accessToken);
@@ -59,10 +71,10 @@ export const KakaoAuth = {
         }
 
         // 토큰 할당
-        window.Kakao.Auth.setAccessToken(accessToken);
+        Kakao.Auth.setAccessToken(accessToken);
 
         // 사용자 정보 가져오기
-        window.Kakao.API.request({
+        Kakao.API.request({
             url: '/v2/user/me',
             success: function (response) {
                 userMeSucCallBack(response);
@@ -83,15 +95,27 @@ export const KakaoAuth = {
             return;
         }
 
-        if ( !window.Kakao.Auth.getAccessToken() ) {
+        if ( !Kakao.Auth.getAccessToken() ) {
             console.log('Not logged in.');
             return;
         }
 
         // 접근 토큰 무효화
-        window.Kakao.Auth.logout(function() {
-            logoutCallBack( window.Kakao.Auth.getAccessToken() );
+        Kakao.Auth.logout(function() {
+            logoutCallBack( Kakao.Auth.getAccessToken() );
         });
+    },
+    /**
+     * 모바일 웹에서 카카오톡이 설치되어 있으면 카카오톡을 통한 로그인
+     * - redirectUrl로 페이지가 이동하며, URL 뒤에 인가 코드를 백엔드 서버로 던짐
+     * - 서버에서는 REST API로 토큰 요청해서 응답
+     * @param {string} redirectUrl 
+     */
+    loginWithKakaoRedirect: (redirectUrl) => {
+        Kakao.Auth.authorize({
+            // // 카카오 개발자 콘솔에 등록한 Redirect URI
+            redirectUri: redirectUrl
+        })
     }
 };
 
@@ -119,11 +143,11 @@ export const NaverAuth = {
             return false;
         }
 
-        const naverLogin = new window.naver.LoginWithNaverId(
+        const naverLogin = new naver.LoginWithNaverId(
             {
                 clientId: clientId,
                 callbackUrl: callbackUrl,
-                isPopup: !isMobile(), /* 팝업을 통한 연동처리 여부 */
+                isPopup: !isMobile(), /* 팝업을 통한 연동처리 여부, 모바일 웹에서는 fasle면 네이버 앱을 통한 로그인 가능 */
                 loginButton: {color: "green", type: 3, height: 60} /* 로그인 버튼의 타입을 지정 */
             }
         );
@@ -138,7 +162,7 @@ export const NaverAuth = {
      * @returns
      * 
      * @example
-     * const naverLogin = Naver.loginWithNaverCallBack(clientId, callbackUrl); 
+     * const naverLogin = NaverAuth.loginWithNaverCallBack(clientId, callbackUrl); 
      * 
      * naverLogin.getLoginStatus(function (status) {
      *  if (status) {
@@ -172,11 +196,11 @@ export const NaverAuth = {
             return false;
         }
 
-        const naverLogin = new window.naver.LoginWithNaverId(
+        const naverLogin = new naver.LoginWithNaverId(
             {
                 clientId: clientId,
                 callbackUrl: callbackUrl,
-                isPopup: true,
+                isPopup: !isMobile(),
                 callbackHandle: true
                 /* callback 페이지가 분리되었을 경우에 callback 페이지에서는 callback처리를 해줄수 있도록 설정합니다. */
             }
