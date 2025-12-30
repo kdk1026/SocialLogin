@@ -10,31 +10,18 @@
  * @returns 
  */
 export const isMobile = () => {
-    if (navigator.userAgentData) {
+    // 최신 브라우저 표준 API 사용
+    if ( navigator.userAgentData?.mobile !== undefined ) {
         return navigator.userAgentData.mobile;
     }
 
-    // userAgentData를 사용할 수 없는 경우 user agent 문자열을 분석합니다.
-    const userAgent = navigator.userAgent;
+    const ua = navigator.userAgent.toLowerCase();
+    const isMobileUA = /android|iphone|ipad|ipod|blackberry|windows phone|webos/i.test(ua);
 
-    // 복잡도를 줄인 정규식 (정확도 저하 가능성 있음)
-    return /(mobile|android|iphone|ipod|ipad|windows phone)/i.test(userAgent);
-};
+    // iPadOS는 UserAgent가 Mac과 동일하므로 터치 포인트로 구분
+    const isIPadOS = (navigator.maxTouchPoints > 1 && /mac/i.test(ua));
 
-/**
- * 모바일 브라우저 여부 체크 (브라우저 모바일 모드도 모바일로 인식)
- * @returns 
- */
-export const isUserAgentMobile = () => {
-    const userAgent = navigator.userAgent || window.opera;
-    
-    return (
-        /android/i.test(userAgent) ||
-        /iPad|iPhone|iPod/.test(userAgent) ||
-        /blackberry|bb10|playbook/i.test(userAgent) ||
-        /windows phone/i.test(userAgent) ||
-        /webos|touchpad|hpwos/i.test(userAgent)
-    );
+    return isMobileUA || isIPadOS;
 };
 
 /**
