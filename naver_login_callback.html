@@ -13,13 +13,20 @@
 </head>
 <body>
 
-    <script>
+    <script type="module">
+        import { NaverAuth } from './utils/socialLogin.js';
+
 		function fnGetDomain() {
 			return window.location.protocol + "//" + window.location.host;
 		}
 
         const naverCallback = fnGetDomain() + '/naver_login_callback.html';
-		const naverLogin = CommonJS.SocialLogin.loginWithNaverCallBack(Config.Naver.naverClientId, naverCallback);
+
+        // 일반 전역 방식
+		//const naverLogin = CommonJS.SocialLogin.loginWithNaverCallBack(Config.Naver.naverClientId, naverCallback);
+
+        // module 방식 (임포트 및 선언 수동, 브라우저 콘솔에서 함수 호출 불가)
+        const naverLogin = NaverAuth.loginWithNaverCallBack(Config.Naver.naverClientId, naverCallback);
 
         // Callback의 처리. 정상적으로 Callback 처리가 완료될 경우 main page로 redirect(또는 Popup close)
         window.addEventListener('load', function () {

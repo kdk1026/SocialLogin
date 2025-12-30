@@ -1,4 +1,4 @@
-var Config = {}
+const Config = {};
 
 Config.Naver = {
     naverClientId : 'A43Bves_ovKKl8L3XGjM',

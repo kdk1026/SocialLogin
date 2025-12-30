@@ -20,7 +20,9 @@
 		<div id="naverIdLogin" style="display: none;"></div>
     </div>
     
-    <script>
+    <script type="module">
+        import { NaverAuth } from './utils/socialLogin.js';
+
         document.querySelector('#btnNaverLogin').addEventListener('click', function() {
             document.querySelector('#naverIdLogin').firstChild.click();
         });
@@ -30,7 +32,12 @@
 		}
 
         const naverCallback = fnGetDomain() + '/naver_login_callback.html';
-        CommonJS.SocialLogin.loginWithNaver(Config.Naver.naverClientId, naverCallback);
+
+        // 일반 전역 방식
+        //CommonJS.SocialLogin.loginWithNaver(Config.Naver.naverClientId, naverCallback);
+
+        // module 방식 (임포트 및 선언 수동, 브라우저 콘솔에서 함수 호출 불가)
+        NaverAuth.loginWithNaver(Config.Naver.naverClientId, naverCallback);
 
         function getProfileSucCallBack(profileObj) {
             console.log(profileObj);
